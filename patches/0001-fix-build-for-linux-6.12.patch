@@ -1,3 +1,13 @@
+From 2ebbdedf3e480d2c914d293a8c96fd5c40c631e7 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Tue, 29 Jul 2025 11:33:42 +0800
+Subject: [PATCH 1/8] fix build for linux 6.12
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ os_dep/linux/ioctl_cfg80211.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
 --- a/os_dep/linux/ioctl_cfg80211.c
 +++ b/os_dep/linux/ioctl_cfg80211.c
 @@ -4598,7 +4598,7 @@ static int cfg80211_rtw_get_txpower(stru

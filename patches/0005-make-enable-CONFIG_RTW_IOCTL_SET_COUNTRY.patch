@@ -1,0 +1,32 @@
+From a418c2c970c315920028c2819f57daf00ff68dca Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Tue, 29 Jul 2025 16:07:18 +0800
+Subject: [PATCH 5/8] make: enable CONFIG_RTW_IOCTL_SET_COUNTRY
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ Makefile | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+--- a/Makefile
++++ b/Makefile
+@@ -1419,6 +1419,8 @@ ifeq ($(CONFIG_SDIO_HCI), y)
+ _PLATFORM_FILES += platform/platform_ARM_SUN50IW1P1_sdio.o
+ endif
+ 
++ccflags-y += -DCONFIG_RTW_IOCTL_SET_COUNTRY
++
+ ARCH := arm64
+ # ===Cross compile setting for Android 5.1(64) SDK ===
+ CROSS_COMPILE := /home/android_sdk/Allwinner/a64/android-51/lichee/out/sun50iw1p1/android/common/buildroot/external-toolchain/bin/aarch64-linux-gnu-
+@@ -1432,6 +1434,10 @@ KSRC := $(shell pwd)/../../../Android/ke
+ ARCH := arm
+ endif
+ 
++ifeq ($(CONFIG_SDIO_HCI), y)
++ccflags-y += -DRTW_SUPPORT_PLATFORM_SHUTDOWN
++endif
++
+ ifeq ($(CONFIG_PLATFORM_MSTAR_TITANIA12), y)
+ ccflags-y += -DCONFIG_LITTLE_ENDIAN -DCONFIG_PLATFORM_MSTAR -DCONFIG_PLATFORM_MSTAR_TITANIA12
+ ARCH:=mips

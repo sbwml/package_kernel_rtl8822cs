@@ -1,0 +1,21 @@
+From 65ef5a2ab8951bd55460c31d4172e6d7442cbd64 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Tue, 29 Jul 2025 16:04:49 +0800
+Subject: [PATCH 4/8] disable LOAD_PHY_PARA_FROM_FILE
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/Makefile
++++ b/Makefile
+@@ -61,7 +61,7 @@ CONFIG_WAPI_SUPPORT = n
+ CONFIG_EFUSE_CONFIG_FILE = y
+ CONFIG_EXT_CLK = n
+ CONFIG_TRAFFIC_PROTECT = n
+-CONFIG_LOAD_PHY_PARA_FROM_FILE = y
++CONFIG_LOAD_PHY_PARA_FROM_FILE = n
+ CONFIG_TXPWR_BY_RATE = y
+ CONFIG_TXPWR_BY_RATE_EN = y
+ CONFIG_TXPWR_LIMIT = y

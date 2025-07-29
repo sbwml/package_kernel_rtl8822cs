@@ -1,0 +1,23 @@
+From fec68f8aff186355752efc05f6603d91e37eea2f Mon Sep 17 00:00:00 2001
+From: Jensen Huang <jensenhuang@friendlyarm.com>
+Date: Wed, 19 Feb 2025 15:19:46 +0800
+Subject: [PATCH 7/8] Fix DS Parameter Set IE offset handling
+
+Signed-off-by: Jensen Huang <jensenhuang@friendlyarm.com>
+---
+ core/rtw_ap.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/core/rtw_ap.c
++++ b/core/rtw_ap.c
+@@ -132,7 +132,9 @@ static void update_BCNTIM(_adapter *pada
+ 				offset += tmp_len + 2;
+ 
+ 			/*DS Parameter Set IE, len=3*/
+-			offset += 3;
++			p = rtw_get_ie(pie + _BEACON_IE_OFFSET_, _DSSET_IE_, &tmp_len, (pnetwork_mlmeext->IELength - _BEACON_IE_OFFSET_));
++			if (p != NULL)
++				offset += 3;
+ 
+ 			premainder_ie = pie + offset;
+ 

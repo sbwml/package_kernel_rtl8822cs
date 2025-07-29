@@ -1,0 +1,29 @@
+From 1d80e4dcabbbd206f0ac119e444a68ee53d35d9d Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Tue, 29 Jul 2025 17:24:51 +0800
+Subject: [PATCH] core: rtw_ap: suppress InfrastructureMode warning on
+ unexpected values
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ core/rtw_ap.c | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+--- a/core/rtw_ap.c
++++ b/core/rtw_ap.c
+@@ -1977,15 +1977,6 @@ int rtw_check_beacon_data(_adapter *pada
+ 
+ 	_rtw_memcpy(ie, pbuf, pbss_network->IELength);
+ 
+-
+-	if (pbss_network->InfrastructureMode != Ndis802_11APMode
+-		&& pbss_network->InfrastructureMode != Ndis802_11_mesh
+-	) {
+-		rtw_warn_on(1);
+-		return _FAIL;
+-	}
+-
+-
+ 	rtw_ap_check_scan(padapter);
+ 
+ 

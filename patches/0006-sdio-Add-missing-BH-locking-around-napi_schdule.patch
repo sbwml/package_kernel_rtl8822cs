@@ -1,0 +1,28 @@
+From 6f2136c25773ce3ab79895cc08cbc8768de7999c Mon Sep 17 00:00:00 2001
+From: Jensen Huang <jensenhuang@friendlyarm.com>
+Date: Fri, 13 Oct 2023 14:26:05 +0800
+Subject: [PATCH 6/8] sdio: Add missing BH locking around napi_schdule()
+
+Fixes the following error:
+  NOHZ tick-stop error: local softirq work is pending, handler #08!!!
+
+Signed-off-by: Jensen Huang <jensenhuang@friendlyarm.com>
+---
+ hal/rtl8822c/sdio/rtl8822cs_recv.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+--- a/hal/rtl8822c/sdio/rtl8822cs_recv.c
++++ b/hal/rtl8822c/sdio/rtl8822cs_recv.c
+@@ -549,8 +549,11 @@ s32 rtl8822cs_recv_hdl(_adapter *adapter
+ 			a = d->padapters[i];
+ 			recvpriv = &a->recvpriv;
+ 			if ((rtw_if_up(a) == _TRUE)
+-			    && skb_queue_len(&recvpriv->rx_napi_skb_queue))
++			    && skb_queue_len(&recvpriv->rx_napi_skb_queue)) {
++				local_bh_disable();
+ 				napi_schedule(&a->napi);
++				local_bh_enable();
++			}
+ 		}
+ 	}
+ #endif /* CONFIG_RTW_NAPI_V2 */

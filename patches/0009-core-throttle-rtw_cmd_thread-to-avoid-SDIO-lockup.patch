@@ -1,0 +1,21 @@
+From fe59525916e18302e016a7304a75006ae9c16651 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Tue, 29 Jul 2025 17:10:23 +0800
+Subject: [PATCH] core: throttle rtw_cmd_thread to avoid SDIO lockup
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ core/rtw_cmd.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/core/rtw_cmd.c
++++ b/core/rtw_cmd.c
+@@ -647,6 +647,8 @@ _next:
+ 		ret = cmd_hdl(pcmd->padapter, pcmdbuf);
+ 		pcmd->res = ret;
+ 
++		msleep(5);
++
+ 		pcmdpriv->cmd_seq++;
+ 
+ post_process:

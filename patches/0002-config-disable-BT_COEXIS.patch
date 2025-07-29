@@ -1,0 +1,21 @@
+From 7eef72f4e51e42a48c0ae5ac42f8019dd899abc4 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Tue, 29 Jul 2025 11:36:49 +0800
+Subject: [PATCH 2/8] config: disable BT_COEXIS
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/Makefile
++++ b/Makefile
+@@ -56,7 +56,7 @@ CONFIG_IPS_MODE = default
+ CONFIG_LPS_MODE = default
+ CONFIG_USB_AUTOSUSPEND = n
+ CONFIG_HW_PWRP_DETECTION = n
+-CONFIG_BT_COEXIST = y
++CONFIG_BT_COEXIST = n
+ CONFIG_WAPI_SUPPORT = n
+ CONFIG_EFUSE_CONFIG_FILE = y
+ CONFIG_EXT_CLK = n

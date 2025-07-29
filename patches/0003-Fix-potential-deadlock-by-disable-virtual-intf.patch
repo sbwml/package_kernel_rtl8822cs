@@ -1,0 +1,71 @@
+From 15dc1822a489b8d2dfd038966f70650b16b13159 Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Tue, 29 Jul 2025 16:03:14 +0800
+Subject: [PATCH 3/8] Fix potential deadlock by disable virtual intf
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ Makefile                      | 5 +++++
+ os_dep/linux/ioctl_cfg80211.c | 6 ++++++
+ 2 files changed, 11 insertions(+)
+
+--- a/Makefile
++++ b/Makefile
+@@ -89,6 +89,7 @@ CONFIG_RTW_DISABLE_HW_PDN = n
+ # user priority mapping rule : tos, dscp
+ CONFIG_RTW_UP_MAPPING_RULE = tos
+ CONFIG_RTW_MBO = n
++CONFIG_RTW_VIRTUAL_INTF = n
+ 
+ ########################## Android ###########################
+ # CONFIG_RTW_ANDROID - 0: no Android, 4/5/6/7/8/9/10 : Android version
+@@ -1388,6 +1389,10 @@ ccflags-y += -DCONFIG_PLATFORM_OPS
+ _PLATFORM_FILES += platform/platform_arm_act_sdio.o
+ endif
+ 
++ifeq ($(CONFIG_RTW_VIRTUAL_INTF), y)
++ccflags-y += -DRTW_VIRTUAL_INTF=1
++endif
++
+ ARCH := arm
+ CROSS_COMPILE := /opt/arm-2011.09/bin/arm-none-linux-gnueabi-
+ KSRC := /home/android_sdk/Action-semi/705a_android_L/android/kernel
+--- a/os_dep/linux/ioctl_cfg80211.c
++++ b/os_dep/linux/ioctl_cfg80211.c
+@@ -5078,6 +5078,7 @@ static const struct net_device_ops rtw_c
+ };
+ #endif
+ 
++#ifdef RTW_VIRTUAL_INT
+ static int rtw_cfg80211_add_monitor_if(_adapter *padapter, char *name, struct net_device **ndev)
+ {
+ 	int ret = 0;
+@@ -5161,7 +5162,9 @@ out:
+ 
+ 	return ret;
+ }
++#endif
+ 
++#ifdef RTW_VIRTUAL_INT
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 6, 0))
+ static struct wireless_dev *
+ #elif (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 38)) || defined(COMPAT_KERNEL_RELEASE)
+@@ -5324,6 +5327,7 @@ exit:
+ 	rtw_set_rtnl_lock_holder(dvobj, NULL);
+ 	return ret;
+ }
++#endif /* RTW_VIRTUAL_INT */
+ 
+ static int rtw_add_beacon(_adapter *adapter, const u8 *head, size_t head_len, const u8 *tail, size_t tail_len)
+ {
+@@ -10380,8 +10384,10 @@ static struct cfg80211_ops rtw_cfg80211_
+ 	.flush_pmksa = cfg80211_rtw_flush_pmksa,
+ 
+ #ifdef CONFIG_AP_MODE
++#ifdef RTW_VIRTUAL_INT
+ 	.add_virtual_intf = cfg80211_rtw_add_virtual_intf,
+ 	.del_virtual_intf = cfg80211_rtw_del_virtual_intf,
++#endif
+ 
+ #if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 4, 0)) && !defined(COMPAT_KERNEL_RELEASE)
+ 	.add_beacon = cfg80211_rtw_add_beacon,
