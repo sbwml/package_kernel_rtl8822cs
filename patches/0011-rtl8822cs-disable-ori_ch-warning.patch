@@ -1,0 +1,21 @@
+From 9f9d512f7b22590fefd4fb8795fc5dcf8be1acec Mon Sep 17 00:00:00 2001
+From: sbwml <admin@cooluc.com>
+Date: Fri, 1 Aug 2025 23:36:57 +0800
+Subject: [PATCH] rtl8822cs: disable ori_ch warning
+
+Signed-off-by: sbwml <admin@cooluc.com>
+---
+ core/rtw_ap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/core/rtw_ap.c
++++ b/core/rtw_ap.c
+@@ -2441,7 +2441,7 @@ int rtw_check_beacon_data(_adapter *pada
+ 
+ 	rtw_ies_get_chbw(pbss_network->IEs + _BEACON_IE_OFFSET_, pbss_network->IELength - _BEACON_IE_OFFSET_
+ 		, &pmlmepriv->ori_ch, &pmlmepriv->ori_bw, &pmlmepriv->ori_offset, 1, 1);
+-	rtw_warn_on(pmlmepriv->ori_ch == 0);
++	//rtw_warn_on(pmlmepriv->ori_ch == 0);
+ 
+ 	{
+ 		/* alloc sta_info for ap itself */
