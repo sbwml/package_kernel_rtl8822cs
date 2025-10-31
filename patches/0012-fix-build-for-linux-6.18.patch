@@ -1,0 +1,88 @@
+--- a/core/crypto/sha256.c
++++ b/core/crypto/sha256.c
+@@ -100,7 +100,7 @@ int hmac_sha256_vector(const u8 *key, si
+  * Returns: 0 on success, -1 on failure
+  */
+ #if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 8, 0))
+-int hmac_sha256(const u8 *key, size_t key_len, const u8 *data,
++int hmac_sha256_legacy(const u8 *key, size_t key_len, const u8 *data,
+ 		size_t data_len, u8 *mac)
+ {
+ 	return hmac_sha256_vector(key, key_len, 1, &data, &data_len, mac);
+--- a/core/crypto/sha256.h
++++ b/core/crypto/sha256.h
+@@ -15,7 +15,7 @@
+ int hmac_sha256_vector(const u8 *key, size_t key_len, size_t num_elem,
+ 		       const u8 *addr[], const size_t *len, u8 *mac);
+ #endif
+-int hmac_sha256(const u8 *key, size_t key_len, const u8 *data,
++int hmac_sha256_legacy(const u8 *key, size_t key_len, const u8 *data,
+ 		size_t data_len, u8 *mac);
+ int sha256_prf(const u8 *key, size_t key_len, const char *label,
+ 	       const u8 *data, size_t data_len, u8 *buf, size_t buf_len);
+--- a/include/osdep_service_linux.h
++++ b/include/osdep_service_linux.h
+@@ -353,7 +353,11 @@ static inline void timer_hdl(unsigned lo
+ #endif
+ {
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0))
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 16, 0))
++	_timer *ptimer = timer_container_of(ptimer, in_timer, timer);
++#else
+ 	_timer *ptimer = from_timer(ptimer, in_timer, timer);
++#endif
+ #else
+ 	_timer *ptimer = (_timer *)cntx;
+ #endif
+--- a/os_dep/linux/ioctl_cfg80211.c
++++ b/os_dep/linux/ioctl_cfg80211.c
+@@ -3557,7 +3557,11 @@ exit:
+ 	return ret;
+ }
+ 
+-static int cfg80211_rtw_set_wiphy_params(struct wiphy *wiphy, u32 changed)
++static int cfg80211_rtw_set_wiphy_params(struct wiphy *wiphy,
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 18, 0))
++	int radio_idx,
++#endif
++	u32 changed)
+ {
+ #if 0
+ 	struct iwm_priv *iwm = wiphy_to_iwm(wiphy);
+@@ -4534,6 +4538,9 @@ static int cfg80211_rtw_set_txpower(stru
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 8, 0))
+ 	struct wireless_dev *wdev,
+ #endif
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 18, 0))
++	int radio_idx,
++#endif
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 36)) || defined(COMPAT_KERNEL_RELEASE)
+ 	enum nl80211_tx_power_setting type, int mbm)
+ #else
+@@ -4592,8 +4599,17 @@ exit:
+ 	return ret;
+ }
+ 
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 18, 0))
++static int cfg80211_rtw_get_txpower(struct wiphy *wiphy,
++				    struct wireless_dev *wdev,
++				    int radio_idx,
++				    unsigned int link_id, int *dbm)
++{
++	*dbm = (12);
+ 
+-
++	return 0;
++}
++#else
+ static int cfg80211_rtw_get_txpower(struct wiphy *wiphy,
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 8, 0))
+ 	struct wireless_dev *wdev,
+@@ -4623,6 +4639,7 @@ static int cfg80211_rtw_get_txpower(stru
+ 	return 0;
+ }
+ #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 31)) */
++#endif
+ 
+ inline bool rtw_cfg80211_pwr_mgmt(_adapter *adapter)
+ {
