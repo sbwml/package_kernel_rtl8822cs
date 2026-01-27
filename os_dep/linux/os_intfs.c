@@ -22,6 +22,10 @@ MODULE_DESCRIPTION("Realtek Wireless Lan Driver");
 MODULE_AUTHOR("Realtek Semiconductor Corp.");
 MODULE_VERSION(DRIVERVERSION);
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 8, 0))
+#define strlcpy strscpy
+#endif
+
 /* module param defaults */
 int rtw_chip_version = 0x00;
 int rtw_rfintfs = HWPI;
