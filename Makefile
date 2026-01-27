@@ -135,6 +135,8 @@ CONFIG_HIGH_PRIORITY_CMD_THREAD = n
 CONFIG_RTW_DISABLE_HW_PDN = n
 # CONFIG_RTKM - n/m/y for not support / standalone / built-in
 CONFIG_RTKM ?= n
+# disable virtual intf for openwrt
+CONFIG_RTW_VIRTUAL_INTF = n
 ########################## Android ###########################
 # CONFIG_RTW_ANDROID - 0: no Android, 4/5/6/7/8/9/10/11 : Android version
 CONFIG_RTW_ANDROID = 0
@@ -1543,6 +1545,10 @@ ccflags-y += -DCONFIG_RADIO_WORK
 ifeq ($(CONFIG_SDIO_HCI), y)
 ccflags-y += -DCONFIG_PLATFORM_OPS
 _PLATFORM_FILES += platform/platform_arm_act_sdio.o
+endif
+
+ifeq ($(CONFIG_RTW_VIRTUAL_INTF), y)
+ccflags-y += -DRTW_VIRTUAL_INTF=1
 endif
 
 ARCH := arm
