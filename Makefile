@@ -2531,6 +2531,7 @@ endif
 ########### HAL_RTL8822C #################################
 ifeq ($(CONFIG_RTL8822C), y)
 include $(src)/rtl8822c.mk
+ccflags-y += -DCONFIG_RTW_IOCTL_SET_COUNTRY
 endif
 
 ########### HAL_RTL8814B #################################
