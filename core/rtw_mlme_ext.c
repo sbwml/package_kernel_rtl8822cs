@@ -12975,8 +12975,9 @@ u8 createbss_hdl(_adapter *padapter, u8 *pbuf)
 		_rtw_memcpy(pnetwork->IEs, pdev_network->IEs, pnetwork->IELength);
 		start_create_ibss(padapter);
 	} else {
-		rtw_warn_on(1);
-		ret = H2C_PARAMETERS_ERROR;
+		//rtw_warn_on(1);
+		//ret = H2C_PARAMETERS_ERROR;
+		goto exit;
 	}
 
 ibss_post_hdl:
