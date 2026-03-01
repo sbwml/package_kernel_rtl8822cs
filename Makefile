@@ -18,7 +18,7 @@ include $(INCLUDE_DIR)/package.mk
 define KernelPackage/rtl8822cs
   SUBMENU:=Wireless Drivers
   TITLE:=Realtek RTL8822CS SDIO WiFi support (High Performance)
-  DEPENDS:=+kmod-cfg80211 +@DRIVER_11N_SUPPORT +@DRIVER_11AC_SUPPORT
+  DEPENDS:=+kmod-mmc +kmod-cfg80211 +@DRIVER_11N_SUPPORT +@DRIVER_11AC_SUPPORT
   FILES:=\
 	$(PKG_BUILD_DIR)/rtl8822cs.ko
   AUTOLOAD:=$(call AutoProbe,rtl8822cs)
