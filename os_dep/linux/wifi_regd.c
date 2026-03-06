@@ -224,7 +224,7 @@ bool rtw_regd_is_wiphy_self_managed(struct wiphy *wiphy)
 static struct ieee80211_reg_rule rtw_get_ieee80211_reg_rule(struct get_chplan_resp *chplan, enum band_type band, int last_end_freq, int start_freq, int end_freq, int next_start_freq, u32 flags)
 {
 	struct ieee80211_reg_rule rule = REG_RULE(
-		start_freq - 10, end_freq + 10, 20, 6, 20,
+		start_freq - 10, end_freq + 10, 20, 6, 30,
 		((flags & RTW_CHF_NO_IR) ? NL80211_RRF_NO_IR : 0)
 		| ((flags & RTW_CHF_DFS) ? NL80211_RRF_DFS : 0)
 	);
