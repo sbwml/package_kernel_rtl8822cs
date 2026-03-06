@@ -119,20 +119,29 @@ static void update_BCNTIM(_adapter *padapter)
 			tim_ielen = 0;
 
 			/*calculate head_len*/
-			offset = _FIXED_IE_LENGTH_;
+			{
+				u8 *p_ie = pie + _FIXED_IE_LENGTH_;
+				u8 *p_end = pie + pnetwork_mlmeext->IELength;
+				u8 eid;
 
-			/* get ssid_ie len */
-			p = rtw_get_ie(pie + _BEACON_IE_OFFSET_, _SSID_IE_, &tmp_len, (pnetwork_mlmeext->IELength - _BEACON_IE_OFFSET_));
-			if (p != NULL)
-				offset += tmp_len + 2;
-
-			/*get supported rates len*/
-			p = rtw_get_ie(pie + _BEACON_IE_OFFSET_, _SUPPORTEDRATES_IE_, &tmp_len, (pnetwork_mlmeext->IELength - _BEACON_IE_OFFSET_));
-			if (p !=  NULL)
-				offset += tmp_len + 2;
-
-			/*DS Parameter Set IE, len=3*/
-			offset += 3;
+				while (p_ie + 2 <= p_end && p_ie + p_ie[1] + 2 <= p_end) {
+					eid = p_ie[0];
+					if (eid == _SSID_IE_ ||
+						eid == _SUPPORTEDRATES_IE_ ||
+						eid == _DSSET_IE_ ||
+						eid == _EXT_SUPPORTEDRATES_IE_ ||
+						eid == _HT_CAPABILITY_IE_ ||
+						eid == _HT_ADD_INFO_IE_ || /* HT Operation */
+						eid == WLAN_EID_VHT_CAPABILITY ||
+						eid == WLAN_EID_VHT_OPERATION)
+					{
+						p_ie += p_ie[1] + 2;
+					} else {
+						break;
+					}
+				}
+				offset = p_ie - pie;
+			}
 
 			premainder_ie = pie + offset;
 
