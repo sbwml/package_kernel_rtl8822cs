@@ -126,7 +126,11 @@ MODULE_DEVICE_TABLE(sdio, sdio_ids);
 static int rtw_drv_init(struct sdio_func *func, const struct sdio_device_id *id);
 static void rtw_dev_remove(struct sdio_func *func);
 #ifdef CONFIG_SDIO_HOOK_DEV_SHUTDOWN
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 12, 0))
+static void rtw_dev_shutdown(struct sdio_func *func);
+#else
 static void rtw_dev_shutdown(struct device *dev);
+#endif
 #endif
 static int rtw_sdio_resume(struct device *dev);
 static int rtw_sdio_suspend(struct device *dev);
@@ -149,9 +153,16 @@ static struct sdio_drv_priv sdio_drvpriv = {
 	.r871xs_drv.remove = rtw_dev_remove,
 	.r871xs_drv.name = (char *)DRV_NAME,
 	.r871xs_drv.id_table = sdio_ids,
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 12, 0))
+#ifdef CONFIG_SDIO_HOOK_DEV_SHUTDOWN
+	.r871xs_drv.shutdown = rtw_dev_shutdown,
+#endif
+#endif
 	.r871xs_drv.drv = {
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(6, 12, 0))
 #ifdef CONFIG_SDIO_HOOK_DEV_SHUTDOWN
 		.shutdown = rtw_dev_shutdown,
+#endif
 #endif
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 29))
 		.pm = &rtw_sdio_pm_ops,
@@ -1252,6 +1263,14 @@ static void rtw_dev_remove(struct sdio_func *func)
 }
 
 #ifdef CONFIG_SDIO_HOOK_DEV_SHUTDOWN
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 12, 0))
+static void rtw_dev_shutdown(struct sdio_func *func)
+{
+	RTW_INFO("==> %s !\n", __func__);
+	rtw_dev_remove(func);
+	RTW_INFO("<== %s !\n", __func__);
+}
+#else
 static void rtw_dev_shutdown(struct device *dev)
 {
 	struct sdio_func *func;
@@ -1267,6 +1286,7 @@ static void rtw_dev_shutdown(struct device *dev)
 
 	RTW_INFO("<== %s !\n", __func__);
 }
+#endif
 #endif
 
 extern int pm_netdev_open(struct net_device *pnetdev, u8 bnormal);
